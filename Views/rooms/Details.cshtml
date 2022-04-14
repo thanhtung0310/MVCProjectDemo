@@ -1,0 +1,43 @@
+﻿@model DatabaseProvider.room
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>room</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.room_number)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.room_number)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.room_type_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.room_type_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.room_status_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.room_status_id)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.room_id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

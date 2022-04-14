@@ -1,0 +1,100 @@
+﻿@model List<DatabaseProvider.account>
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<table border="1" cellspacing="0" id="AccountList">
+    <tr>
+        <th>Account ID</th>
+        <th>Employee ID</th>
+        <th>Account username</th>
+        <th>Account password</th>
+        <th>Role ID</th>
+    </tr>
+    @foreach (DatabaseProvider.account item in Model)
+    {
+        <tr>
+            <td>@item.acc_id</td>
+            <td>@item.emp_id</td>
+            <td>@item.acc_username</td>
+            <td>@item.acc_password</td>
+            <td>@item.role_id</td>
+        </tr>
+    }
+</table>
+
+<h2>THÊM MỚI ACCOUNT</h2>
+<input type="text" id="txtID" placeholder="Nhập ID..." />
+<br />
+<input type="text" id="txtUsername" placeholder="Nhập username..." />
+<br />
+<input type="password" id="txtPWD" placeholder="Nhập password..." />
+<br />
+<input type="password" id="txtPWD2" placeholder="Nhập lại password..." />
+<br />
+@*<input type="button" onclick="AddNewAccount()" value="LƯU LẠI" /> <br />*@
+
+<div style="padding: 5px; border: 1px solid black;width: 80px;text-align: center;" onclick="AddNewAccount()">LƯU LẠI</div>
+
+<p id="lblMS" style="padding: 8px; border: 1px solid #4cff00; display: none;"></p>
+
+<script>
+    function AddNewAccount() {
+        // Kiểm tra
+        var id = $('#txtID').val();
+        var username = $('#txtUsername').val();
+        var pwd = $('#txtPWD').val();
+        var pwd2 = $('#txtPWD2').val();
+        if (id == '' || username == '' || pwd == '' || pwd2 == '') {
+            $('#lblMS').html('Phải nhập đủ các trường thông tin...');
+            $('#lblMS').css('border-color', 'red');
+            $('#lblMS').css('color', 'red');
+            $('#lblMS').css('display', 'block');
+            return;
+        }
+        else if (pwd != pwd2) {
+            $('#lblMS').html('Mật khẩu và mật khẩu nhập lại không giống nhau...');
+            $('#lblMS').css('border-color', 'red');
+            $('#lblMS').css('color', 'red');
+            $('#lblMS').css('display', 'block');
+            return;
+        }
+        // AJAX
+        var form = new FormData();
+        form.append("id", id);
+        form.append("username", username);
+        form.append("pwd", pwd);
+        form.append("pwd2", pwd2);
+        // AJAX REQUEST
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", domain + '/Home/AddAccount', true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var content = xhr.responseText;
+                var json_ct = JSON.parse(content);
+                if (json_ct.Data.status == "OK") {
+                    // Thêm hiển thị mới vào table
+                    var tr = '<tr><td>' + id + '</td><td>' + id + '</td><td>' + username + '</td><td>' + pwd + '</td><td>5</td></tr>';
+                    $('#AccountList').append(tr);
+                    // Thông báo thêm mới thành công
+                    $('#lblMS').html('Thêm mói thành công!');
+                    $('#lblMS').css('border-color', '#4cff00');
+                    $('#lblMS').css('color', '#4cff00');
+                    $('#lblMS').css('display', 'block');
+                    // Xóa DL của form
+                    $('#txtID').val('');
+                    $('#txtUsername').val('');
+                    $('#txtPWD').val('');
+                    $('#txtPWD2').val('');
+                }
+                else {
+                    $('#lblMS').html(json_ct.Data.message);
+                    $('#lblMS').css('border-color', 'red');
+                    $('#lblMS').css('color', 'red');
+                    $('#lblMS').css('display', 'block');
+                }
+            }
+        }
+        xhr.send(form);
+    }
+</script>

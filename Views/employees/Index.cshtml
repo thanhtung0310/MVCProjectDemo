@@ -1,0 +1,79 @@
+﻿@*@model IEnumerable<DatabaseProvider.employee>*@
+@model PagedList.IPagedList<DatabaseProvider.employee>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@using (Html.BeginForm("Index", "employees", FormMethod.Get))
+{
+    <p>
+        Employee Name: @Html.TextBox("SearchString", (string)ViewBag.searchValue) <input type="submit" value="Search Name" /> <input type="submit" name="Reset" value="Default" />
+        @Html.Hidden("page", (object)ViewBag.page)
+        @Html.Hidden("sortProperty", (object)ViewBag.sortProperty)
+        @Html.Hidden("sortOrder", (object)ViewBag.sortOrder)
+        @Html.Hidden("size", (object)ViewBag.pageSize)
+    </p>
+}
+
+<table class="table">
+    <tr>
+        @Html.Raw(ViewBag.Headings)
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.emp_id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.emp_name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.emp_position)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.emp_dob)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.emp_contact_number)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.emp_id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.emp_id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.emp_id })
+            </td>
+        </tr>
+    }
+
+</table>
+<br />
+<!-- Phan trang-->
+<div class="row">
+    <div class="col-md-6 col-lg-6 col-xs-6 col-sm-6">
+        @using (Html.BeginForm("Index", "employees", FormMethod.Get))
+        {
+            <p>
+                Page Size: @Html.DropDownList("size", (List<SelectListItem>)ViewBag.size, new { @onchange = "this.form.submit();" })
+            </p>
+
+            @Html.Hidden("page", (object)ViewBag.page)
+            @Html.Hidden("sortProperty", (object)ViewBag.sortProperty)
+            @Html.Hidden("sortOrder", (object)ViewBag.sortOrder)
+            @Html.Hidden("searchString", (object)ViewBag.searchValue)
+        }
+    </div>
+    <div class="col-md-6 col-lg-6 col-xs-6 col-sm-6 text-right">
+        Page: @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+    </div>
+</div>
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, size = ViewBag.currentSize, sortProperty = ViewBag.sortProperty, sortOrder = ViewBag.SortOrder, searchString = ViewBag.searchValue }))
